@@ -1,0 +1,1370 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Developer Gateway | Project Cyberspace</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* ================================== */
+    /* 🐱 1. 全局基础样式 (地基) */
+    /* ================================== */
+    
+    /* 🎨 主题色 CSS 变量 */
+    :root {
+      --primary-color: #6a5af9;
+      --secondary-color: #4785ff;
+      --success-color: #39e984;
+      --danger-color: #f76190;
+      --warning-color: #f7b731;
+
+      --dark-bg: #0b0a1d;
+      --light-text: #e0e0e0;
+      --dark-text: #b0b0b0;
+      --card-bg: rgba(20, 18, 46, 0.5);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --input-bg: rgba(255, 255, 255, 0.08);
+      
+      --gradient-main: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    }
+    
+    /* [主题2] 剧毒绿 */
+    body.theme-green {
+      --primary-color: #00f260;
+      --secondary-color: #0575e6;
+    }
+    
+    /* [主题3] 赛博红 */
+    body.theme-red {
+      --primary-color: #f00000;
+      --secondary-color: #dc281e;
+    }
+
+    /* 全局设置 */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: var(--dark-bg);
+      color: var(--light-text);
+      overflow-x: hidden;
+      transition: background 0.3s ease;
+    }
+
+    /* 🌌 动态背景 (全局) */
+    #bg-container {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -10;
+      background: radial-gradient(circle at 50% 100%, #1a1f3c, var(--dark-bg));
+    }
+
+    /* 模块的通用容器 (可以复用喵) */
+    .content-section {
+      width: 90%;
+      max-width: 900px;
+      margin: 80px auto;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 30px;
+      animation: moduleFadeIn 1s ease-out;
+    }
+    .content-section h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--glass-border);
+      color: white;
+    }
+    
+    @keyframes moduleFadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body class="theme-default">
+
+  <div id="bg-container"></div>
+
+
+  <div class="top-bar">
+    <div class="news-ticker">
+      <p>
+        <span>[SYSTEM]</span> Welcome to Project Cyberspace Terminal. 
+        <span>[UPDATE]</span> Dev Chat module v1.2 deployed. 
+        <span>[WARNING]</span> High-bandwidth usage detected...
+      </p>
+    </div>
+    <div id="real-time-clock">15:52:00</div>
+  </div>
+  
+  <style>
+    /* 🖥️ 模块1: CSS */
+    .top-bar {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 40px;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .news-ticker { width: 60%; overflow: hidden; position: relative; }
+    .news-ticker p {
+      position: absolute;
+      white-space: nowrap;
+      animation: ticker 30s linear infinite;
+      color: var(--dark-text);
+      font-size: 14px;
+    }
+    .news-ticker span { color: var(--primary-color); font-weight: 600; margin: 0 15px; }
+    @keyframes ticker {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-150%); }
+    }
+    #real-time-clock {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--success-color);
+      font-size: 18px;
+      text-shadow: 0 0 8px var(--success-color);
+    }
+  </style>
+  
+  <script>
+    /* 🖥️ 模块1: JS (时钟) */
+    (function() {
+      const clockEl = document.getElementById('real-time-clock');
+      if (!clockEl) return;
+      function updateClock() {
+        const now = new Date();
+        const h = now.getHours().toString().padStart(2, '0');
+        const m = now.getMinutes().toString().padStart(2, '0');
+        const s = now.getSeconds().toString().padStart(2, '0');
+        clockEl.textContent = `${h}:${m}:${s}`;
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+    })();
+  </script>
+  <div class="theme-switcher">
+    <button class="theme-btn" id="theme-btn"><i class="fa-solid fa-gear"></i></button>
+    <div class="theme-panel" id="theme-panel">
+      <h4>切换主题喵</h4>
+      <div class="color-options">
+        <div class="color-dot active" id="color-default" data-theme="theme-default"></div>
+        <div class="color-dot" id="color-green" data-theme="theme-green"></div>
+        <div class="color-dot" id="color-red" data-theme="theme-red"></div>
+      </div>
+    </div>
+  </div>
+  
+  <style>
+    /* 🎨 模块2: CSS */
+    .theme-switcher {
+      position: fixed; top: 60px; right: 20px; z-index: 99;
+    }
+    .theme-btn {
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      color: white; font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .theme-panel {
+      position: absolute; top: 60px; right: 0;
+      width: 180px;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      padding: 15px;
+      display: none; /* JS控制显示 */
+    }
+    .theme-panel h4 { font-size: 14px; text-align: center; margin-bottom: 15px; }
+    .color-options { display: flex; justify-content: space-around; }
+    .color-dot {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid #fff;
+    }
+    .color-dot.active { box-shadow: 0 0 10px #fff; }
+    #color-default { background: linear-gradient(135deg, #4785ff, #6a5af9); }
+    #color-green { background: linear-gradient(135deg, #0575e6, #00f260); }
+    #color-red { background: linear-gradient(135deg, #dc281e, #f00000); }
+  </style>
+  
+  <script>
+    /* 🎨 模块2: JS (切换逻辑) */
+    (function() {
+      const themeBtn = document.getElementById('theme-btn');
+      const themePanel = document.getElementById('theme-panel');
+      const colorDots = document.querySelectorAll('.color-dot');
+      if (!themeBtn) return;
+      
+      themeBtn.addEventListener('click', () => {
+        themePanel.style.display = themePanel.style.display === 'block' ? 'none' : 'block';
+      });
+      
+      colorDots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          document.body.className = dot.dataset.theme; // 切换 body class
+          colorDots.forEach(d => d.classList.remove('active'));
+          dot.classList.add('active');
+        });
+      });
+    })();
+  </script>
+  <div class="hero-container">
+    
+    <div class="login-card" id="login-card">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-form="login-form">登录</button>
+        <button class="tab-btn" data-form="register-form">注册</button>
+      </div>
+      <div class="form-container">
+        <form id="login-form" class="active">
+          <div class="input-group"><input id="username" type="text" required><label for="username">用户名</label></div>
+          <div class="input-group"><input id="password" type="password" required><label for="password">密码</label></div>
+          <button type="submit" class="submit-btn" id="login-btn">Sign in</button>
+        </form>
+        <form id="register-form">
+          <div class="input-group"><input id="reg-username" type="text" required><label for="reg-username">用户名</label></div>
+          <div class="input-group"><input id="reg-email" type="email" required><label for="reg-email">电子邮箱</label></div>
+          <button type="submit" class="submit-btn">Register</button>
+        </form>
+      </div>
+    </div>
+    
+    <div class="fake-terminal">
+      <div class="terminal-header">
+        <div class="terminal-dot dot-red"></div>
+        <div class="terminal-dot dot-yellow"></div>
+        <div class="terminal-dot dot-green"></div>
+      </div>
+      <div class="terminal-body" id="terminal-body"></div>
+    </div>
+    
+  </div>
+  
+  <style>
+    /* ⌨️ 模块3: CSS */
+    .hero-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      width: 100%;
+      max-width: 1100px;
+      margin-top: 100px;
+      align-items: flex-start;
+    }
+    .login-card {
+      flex: 1; min-width: 320px; max-width: 440px;
+      padding: 35px 40px;
+      border-radius: 20px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: transform 0.1s ease;
+      transform-style: preserve-3d;
+      animation: moduleFadeIn 1s ease-out;
+    }
+    .tab-buttons { display: flex; justify-content: center; margin-bottom: 25px; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 5px; }
+    .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: var(--dark-text); font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 9px; transition: all 0.3s ease; }
+    .tab-btn.active { background: var(--gradient-main); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .form-container > form { display: none; }
+    .form-container > form.active { display: block; }
+    .input-group { position: relative; margin-bottom: 25px; }
+    .input-group input { width: 100%; padding: 14px 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: var(--input-bg); color: white; font-size: 15px; }
+    .input-group label { position: absolute; top: 15px; left: 15px; color: var(--dark-text); pointer-events: none; transition: all 0.3s ease; }
+    .input-group input:focus ~ label, .input-group input:valid ~ label { top: -10px; left: 12px; font-size: 12px; color: var(--primary-color); background: var(--dark-bg); padding: 0 5px; }
+    .input-group input:focus { outline: none; border-color: var(--primary-color); }
+    .submit-btn { width: 100%; padding: 14px; margin-top: 10px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; background: var(--gradient-main); color: white; transition: all 0.3s ease; }
+    .submit-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
+    
+    .fake-terminal {
+      flex: 1; min-width: 320px; max-width: 500px;
+      height: 480px;
+      background: #0D0D0D;
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      font-family: 'Courier New', Courier, monospace;
+      animation: moduleFadeIn 1.2s ease-out;
+    }
+    .terminal-header { background: #2E2E2E; padding: 8px 12px; border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; align-items: center; gap: 6px; }
+    .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27c93f; }
+    .terminal-body { padding: 15px; height: calc(100% - 36px); overflow-y: auto; font-size: 13px; }
+    .terminal-body p { line-height: 1.6; }
+    .terminal-body .line-success { color: var(--success-color); }
+    .terminal-body .line-warning { color: var(--warning-color); }
+    .terminal-body .line-prompt { color: var(--primary-color); }
+    .terminal-body .cursor { display: inline-block; width: 8px; height: 15px; background: white; animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+  </style>
+  
+  <script>
+    /* ⌨️ 模块3: JS (3D, Tabs, Terminal) */
+    
+    /* 3.1 登录卡片 3D 悬浮 */
+    (function() {
+      const card = document.getElementById("login-card");
+      if (!card) return;
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        const rotateX = (y / rect.height) * -8;
+        const rotateY = (x / rect.width) * 8;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+      });
+    })();
+
+    /* 3.1 登录卡片 表单切换 */
+    (function() {
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      const forms = document.querySelectorAll('.form-container > form');
+      if (tabButtons.length === 0) return;
+      tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const formId = btn.dataset.form;
+          tabButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          forms.forEach(f => f.classList.remove('active'));
+          document.getElementById(formId).classList.add('active');
+        });
+      });
+    })();
+
+    /* 3.2 假·编译终端 打字机 */
+    // (function() {
+    //   const terminalBody = document.getElementById('terminal-body');
+    //   if (!terminalBody) return;
+    //   const lines = [
+    //     { text: "Connecting to Project Cyberspace...", type: "line-prompt" },
+    //     { text: "Authentication required. Waiting for login...", type: "line-warning" },
+    //     { text: "Loading frontend assets...", delay: 800 },
+    //     { text: "[OK] Compiled 128/128 files.", type: "line-success", delay: 1500 },
+    //     { text: "Ready for Master's command!", type: "line-prompt", delay: 1000 },
+    //   ];
+    //   let lineIndex = 0;
+    //   let charIndex = 0;
+    //   function typeLine() {
+    //     if (lineIndex >= lines.length) { terminalBody.innerHTML += '<span class="cursor"></span>'; return; }
+    //     const currentLine = lines[lineIndex];
+    //     const lineEl = document.createElement('p');
+    //     if (currentLine.type) { lineEl.className = currentLine.type; }
+    //     terminalBody.appendChild(lineEl);
+    //     typeChar(lineEl, currentLine);
+    //   }
+    //   function typeChar(lineEl, currentLine) {
+    //     if (charIndex < currentLine.text.length) {
+    //       lineEl.textContent += currentLine.text[charIndex];
+    //       charIndex++;
+    //       setTimeout(() => typeChar(lineEl, currentLine), 30 + Math.random() * 30);
+    //     } else {
+    //       lineIndex++; charIndex = 0;
+    //       setTimeout(typeLine, currentLine.delay || 300);
+    //     }
+    //   }
+    //   setTimeout(typeLine, 1000);
+    // })();
+
+
+
+
+
+
+
+
+
+    // (function() {
+    //   const terminalBody = document.getElementById('terminal-body');
+    //   if (!terminalBody) return;
+    //   const lines = [
+    //     { text: "Connecting to Project Cyberspace...", type: "line-prompt" },
+    //     { text: "Authentication required. Waiting for login...", type: "line-warning" },
+    //     { text: "Loading frontend assets...", delay: 800 },
+    //     { text: "[OK] Compiled 128/128 files.", type: "line-success", delay: 1500 },
+    //     { text: "Ready for Master's command!", type: "line-prompt", delay: 1000 },
+    //   ];
+    //   let lineIndex = 0;
+    //   let charIndex = 0;
+    //   function typeLine() {
+    //     if (lineIndex >= lines.length) { terminalBody.innerHTML += '<span class="cursor"></span>'; return; }
+    //     const currentLine = lines[lineIndex];
+    //     const lineEl = document.createElement('p');
+    //     if (currentLine.type) { lineEl.className = currentLine.type; }
+    //     terminalBody.appendChild(lineEl);
+    //     typeChar(lineEl, currentLine);
+    //   }
+    //   function typeChar(lineEl, currentLine) {
+    //     if (charIndex < currentLine.text.length) {
+    //       lineEl.textContent += currentLine.text[charIndex];
+    //       charIndex++;
+    //       setTimeout(() => typeChar(lineEl, currentLine), 30 + Math.random() * 30);
+    //     } else {
+    //       lineIndex++; charIndex = 0;
+    //       setTimeout(typeLine, currentLine.delay || 300);
+    //     }
+    //   }
+    //   setTimeout(typeLine, 1000);
+    // })();
+    
+    /* ⌨️ 模块3: JS (3D, Tabs, Terminal) */
+    
+    /* (3.1 登录卡片 3D 悬浮... 保留不变) */
+    (function() {
+      const card = document.getElementById("login-card");
+      if (!card) return;
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        const rotateX = (y / rect.height) * -8;
+        const rotateY = (x / rect.width) * 8;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+      });
+    })();
+
+    /* (3.1 登录卡片 表单切换... 保留不变) */
+    (function() {
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      const forms = document.querySelectorAll('.form-container > form');
+      if (tabButtons.length === 0) return;
+      tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const formId = btn.dataset.form;
+          tabButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          forms.forEach(f => f.classList.remove('active'));
+          document.getElementById(formId).classList.add('active');
+        });
+      });
+    })();
+
+    /* 喵！就是这里！
+      把旧的 3.2 删掉，换成下面这个新的喵！
+    */
+    
+    /* 3.2 假·编译终端 打字机 (Web 命令行版!) */
+    (function() {
+      const terminalBody = document.getElementById('terminal-body');
+      if (!terminalBody) return;
+      
+      // 喵！超级丰富的 Web 命令行“台词”
+      const lines = [
+        { text: "master@cyberspace:~$ npm install", type: "line-prompt" },
+        { text: "Fetching packages...", delay: 500 },
+        { text: "added 1574 packages from 1265 contributors...", delay: 1000 },
+        { text: "[OK] Dependencies installed successfully.", type: "line-success", delay: 500 },
+        
+        { text: "master@cyberspace:~$ npm run dev", type: "line-prompt", delay: 1000 },
+        { text: "> project-cyberspace@1.0.0 dev", delay: 300 },
+        { text: "> vite", delay: 300 },
+        
+        { text: "[VITE] Re-bundling dependencies...", delay: 800 },
+        { text: "[VITE] Pre-bundling complete.", type: "line-success", delay: 1000 },
+        
+        { text: "  ➜  Local:   http://localhost:3000/", type: "line-prompt", delay: 300 },
+        { text: "  ➜  Network: use --host to expose", delay: 300 },
+        
+        { text: "[INFO] Compiling modules...", type: "line-warning", delay: 1200 },
+        { text: "  ✓ 24 modules transformed.", delay: 800 },
+        
+        { text: "[OK] Server is running. Waiting for login...", type: "line-success", delay: 500 },
+        { text: "Ready for Master's command! 喵~", type: "line-prompt", delay: 1000 },
+      ];
+      
+      let lineIndex = 0;
+      let charIndex = 0;
+      
+      function typeLine() {
+        if (lineIndex >= lines.length) { 
+          terminalBody.innerHTML += '<span class="cursor"></span>'; 
+          terminalBody.scrollTop = terminalBody.scrollHeight; // 滚动到底部
+          return; 
+        }
+        
+        const currentLine = lines[lineIndex];
+        const lineEl = document.createElement('p');
+        if (currentLine.type) { 
+          lineEl.className = currentLine.type; 
+        }
+        
+        // 喵！加一个“$”提示符，看起来更真！
+        if (currentLine.type === 'line-prompt') {
+          lineEl.innerHTML = `<span>$</span> `;
+        }
+        
+        terminalBody.appendChild(lineEl);
+        terminalBody.scrollTop = terminalBody.scrollHeight; // 边打字边滚动
+        
+        typeChar(lineEl, currentLine);
+      }
+      
+      function typeChar(lineEl, currentLine) {
+        if (charIndex < currentLine.text.length) {
+          // 喵！如果是带提示符的，要用 innerHTML 追加
+          if (currentLine.type === 'line-prompt') {
+            lineEl.innerHTML += currentLine.text[charIndex];
+          } else {
+            lineEl.textContent += currentLine.text[charIndex];
+          }
+          charIndex++;
+          setTimeout(() => typeChar(lineEl, currentLine), 20 + Math.random() * 20); // 调快一点！
+        } else {
+          lineIndex++; 
+          charIndex = 0;
+          setTimeout(typeLine, currentLine.delay || 300);
+        }
+      }
+      setTimeout(typeLine, 1000);
+    })();
+   
+
+  </script>
+  <!-- <div class="lofi-player">
+    <div class="lofi-album"><i class="fa-solid fa-cat"></i></div>
+    <div class="lofi-info">
+      <h3>Login Lofi Beats</h3>
+      <p>MiniCat Chillhop</p>
+    </div>
+    <div class="lofi-controls">
+      <i class="fa-solid fa-backward-step"></i>
+      <i class="fa-solid fa-pause"></i>
+      <i class="fa-solid fa-forward-step"></i>
+    </div>
+  </div> -->
+  
+
+<div class="lofi-player" id="lofi-player-module">
+    <div class="lofi-album">
+      <i class="fa-solid fa-cat" id="lofi-album-icon"></i>
+    </div>
+    <div class="lofi-info">
+      <h3 id="lofi-title">Login Lofi Beats</h3>
+      <p id="lofi-artist">MiniCat Chillhop</p>
+    </div>
+    <div class="lofi-controls">
+      <i class="fa-solid fa-backward-step" id="lofi-prev-btn"></i>
+      <i class="fa-solid fa-pause" id="lofi-play-btn"></i> <i class="fa-solid fa-forward-step" id="lofi-next-btn"></i>
+    </div>
+  </div>
+  
+  <style>
+    /* 🎵 模块4: CSS (有修改！) */
+    .lofi-player {
+      width: 100%; max-width: 1100px;
+      margin: 30px auto 80px;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      animation: moduleFadeIn 1.4s ease-out;
+    }
+    .lofi-album {
+      width: 80px; height: 80px;
+      border-radius: 12px;
+      background: #333; /* 图片占位 */
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px; color: var(--dark-text);
+      margin-right: 20px;
+    }
+    .lofi-album i {
+      transition: transform 0.3s ease; /* 换封面时加个动画 */
+    }
+    .lofi-info { flex: 1; }
+    .lofi-info h3 { font-size: 18px; color: white; }
+    .lofi-info p { font-size: 14px; color: var(--dark-text); }
+    .lofi-controls { display: flex; gap: 15px; font-size: 20px; color: var(--light-text); }
+    .lofi-controls i { cursor: pointer; transition: color 0.2s, transform 0.2s; }
+    .lofi-controls i:hover { 
+      color: var(--primary-color); 
+      transform: scale(1.1); /* 鼠标放上去变大一点 */
+    }
+    
+    /* 喵！关键！
+       fa-pause 是“正在播放”的状态，给它成功色！
+       fa-play 是“已暂停”的状态，给它默认色！
+    */
+    .lofi-controls .fa-pause {
+      color: var(--success-color);
+    }
+    .lofi-controls .fa-pause:hover {
+      color: var(--success-color) !important; /* 覆盖 hover */
+      filter: brightness(1.2);
+    }
+    .lofi-controls .fa-play {
+      color: var(--light-text);
+    }
+  </style>
+  
+  <script>
+    /* 🎵 模块4: JS (灵魂！互动播放器！) */
+    (function() {
+      // 1. 找到这个模块和所有按钮
+      const playerModule = document.getElementById('lofi-player-module');
+      if (!playerModule) return; // 如果找不到模块，就啥也不干喵
+
+      const playBtn = document.getElementById('lofi-play-btn');
+      const nextBtn = document.getElementById('lofi-next-btn');
+      const prevBtn = document.getElementById('lofi-prev-btn');
+      
+      const titleEl = document.getElementById('lofi-title');
+      const artistEl = document.getElementById('lofi-artist');
+      const albumIconEl = document.getElementById('lofi-album-icon');
+      
+      // 2. 准备一个 (假的) 播放列表
+      const playlist = [
+        { title: "Login Lofi Beats", artist: "MiniCat Chillhop", icon: "fa-cat" },
+        { title: "Cyber Dreamwave", artist: "Master's Mix", icon: "fa-dog" },
+        { title: "Code & Chill", artist: "NPM Vibes", icon: "fa-music" },
+        { title: "Terminal Groove", artist: "Dev/Null", icon: "fa-terminal" }
+      ];
+      
+      // 3. 记录当前状态
+      let currentSongIndex = 0;
+      let isPlaying = true; // 默认是正在播放 (显示暂停按钮)
+      
+      // 4. 更新歌曲信息 (和封面) 的咒语
+      function updateSongInfo(index) {
+        const song = playlist[index];
+        titleEl.textContent = song.title;
+        artistEl.textContent = song.artist;
+        
+        // 换封面图标 (先移除旧的, 再加上新的)
+        albumIconEl.className = "fa-solid " + song.icon;
+        
+        // 换封面时加个小动画
+        albumIconEl.style.transform = "scale(0.8) rotate(-15deg)";
+        setTimeout(() => {
+          albumIconEl.style.transform = "scale(1) rotate(0deg)";
+        }, 150);
+      }
+      
+      // 5. 播放 / 暂停 的咒语
+      function togglePlay() {
+        isPlaying = !isPlaying; // 状态反转
+        
+        if (isPlaying) {
+          // 变成“正在播放”
+          playBtn.classList.remove('fa-play');
+          playBtn.classList.add('fa-pause');
+          playBtn.style.color = 'var(--success-color)';
+        } else {
+          // 变成“已暂停”
+          playBtn.classList.remove('fa-pause');
+          playBtn.classList.add('fa-play');
+          playBtn.style.color = 'var(--light-text)';
+        }
+      }
+      
+      // 6. 下一首 的咒语
+      function playNext() {
+        currentSongIndex++;
+        if (currentSongIndex >= playlist.length) {
+          currentSongIndex = 0; // 循环播放
+        }
+        updateSongInfo(currentSongIndex);
+        
+        // (假装切歌后自动播放)
+        isPlaying = true; 
+        playBtn.classList.remove('fa-play');
+        playBtn.classList.add('fa-pause');
+        playBtn.style.color = 'var(--success-color)';
+      }
+      
+      // 7. 上一首 的咒v
+      function playPrev() {
+        currentSongIndex--;
+        if (currentSongIndex < 0) {
+          currentSongIndex = playlist.length - 1; // 循环播放
+        }
+        updateSongInfo(currentSongIndex);
+        
+        // (假装切歌后自动播放)
+        isPlaying = true;
+        playBtn.classList.remove('fa-play');
+        playBtn.classList.add('fa-pause');
+        playBtn.style.color = 'var(--success-color)';
+      }
+      
+      // 8. 绑定咒语！
+      playBtn.addEventListener('click', togglePlay);
+      nextBtn.addEventListener('click', playNext);
+      prevBtn.addEventListener('click', playPrev);
+      
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+  <style>
+    /* 🎵 模块4: CSS */
+    .lofi-player {
+      width: 100%; max-width: 1100px;
+      margin: 30px auto 80px;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      animation: moduleFadeIn 1.4s ease-out;
+    }
+    .lofi-album {
+      width: 80px; height: 80px;
+      border-radius: 12px;
+      background: #333; /* 图片占位 */
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px; color: var(--dark-text);
+      margin-right: 20px;
+    }
+    .lofi-info { flex: 1; }
+    .lofi-info h3 { font-size: 18px; color: white; }
+    .lofi-info p { font-size: 14px; color: var(--dark-text); }
+    .lofi-controls { display: flex; gap: 15px; font-size: 20px; color: var(--light-text); }
+    .lofi-controls i { cursor: pointer; transition: 0.2s; }
+    .lofi-controls i:hover { color: var(--primary-color); }
+    .lofi-controls .fa-pause { color: var(--success-color); }
+  </style>
+  <div class="parallax-section" id="parallax-react">
+    <div class="parallax-content">
+      <h2>Modern Stack (React)</h2>
+      <p>本平台基于最新的前端技术栈构建，使用 React 驱动的声明式 UI 界面，带来无与伦比的开发体验喵。</p>
+    </div>
+  </div>
+  <div class="parallax-section" id="parallax-vue">
+    <div class="parallax-content">
+      <h2>Progressive Framework (Vue)</h2>
+      <p>渐进式框架 Vue.js 提供了无与伦比的灵活性，使得我们可以逐步将高级功能集成到登录门户中。</p>
+    </div>
+  </div>
+  
+  <style>
+    /* 🌌 模块5: CSS */
+    .parallax-section {
+      width: 100%; padding: 100px 0;
+      position: relative; overflow: hidden;
+      margin-bottom: 80px;
+      background-attachment: fixed; /* 视差效果的关键! */
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: #1a1f3c;
+    }
+    .parallax-content {
+      width: 90%; max-width: 700px;
+      margin: auto; padding: 40px;
+      text-align: center;
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+    }
+    .parallax-content h2 { font-size: 32px; margin-bottom: 15px; }
+    .parallax-content p { font-size: 16px; color: var(--dark-text); line-height: 1.7; }
+    
+    #parallax-react {
+      background-image: url("https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg");
+      background-size: 30%;
+    }
+    #parallax-vue {
+      background-image: url("https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg");
+      background-size: 25%;
+    }
+  </style>
+  <div class="content-section">
+    <h2><i class="fa-solid fa-code"></i> 今日代码片段 (Code of the Day)</h2>
+    <div class="code-tabs">
+      <button class="code-tab active" data-tab="js-code">JavaScript</button>
+      <button class="code-tab" data-tab="css-code">CSS</button>
+      <button class="code-tab" data-tab="html-code">HTML</button>
+    </div>
+    <pre class="code-snippet active" id="js-code"><code><span class="c-comment">// 喵~ 这是一个酷酷的 JS 效果</span>
+<span class="c-keyword">const</span> <span class="c-var">greet</span> = (<span class="c-var">master</span>) => {
+  <span class="c-var">console</span>.<span class="c-func">log</span>(<span class="c-string">`Hello, ${master}! 喵~`</span>);
+};
+<span class="c-func">greet</span>(<span class="c-string">'My Beloved Master'</span>);
+</code></pre>
+    <pre class="code-snippet" id="css-code"><code><span class="c-comment">/* 玻璃拟态卡片喵 */</span>
+<span class="c-var">.card</span> {
+  <span class="c-keyword">background</span>: <span class="c-string">rgba(255, 255, 255, 0.08)</span>;
+  <span class="c-keyword">backdrop-filter</span>: <span class="c-func">blur</span>(12px);
+}
+</code></pre>
+    <pre class="code-snippet" id="html-code"><code>&lt;<span class="c-keyword">div</span> <span class="c-var">class</span>=<span class="c-string">"login-card"</span>&gt;
+  &lt;<span class="c-keyword">h1</span>&gt;Welcome Back&lt;/<span class="c-keyword">h1</span>&gt;
+&lt;/<span class="c-keyword">div</span>&gt;
+</code></pre>
+  </div>
+  
+  <style>
+    /* 💻 模块6: CSS */
+    .code-tabs { display: flex; gap: 5px; border-bottom: 1px solid var(--glass-border); }
+    .code-tab {
+      padding: 10px 15px; background: transparent; border: none;
+      color: var(--dark-text); cursor: pointer;
+      border-top-left-radius: 8px; border-top-right-radius: 8px;
+    }
+    .code-tab.active {
+      background: #0D0D0D;
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+    }
+    .code-snippet {
+      background: #0D0D0D; padding: 20px;
+      border-radius: 8px; margin-top: -1px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px; overflow-x: auto;
+      display: none; /* JS控制 */
+    }
+    .code-snippet.active { display: block; }
+    /* 假高亮 */
+    .code-snippet .c-keyword { color: #f76190; }
+    .code-snippet .c-var { color: var(--secondary-color); }
+    .code-snippet .c-string { color: var(--warning-color); }
+    .code-snippet .c-func { color: var(--success-color); }
+    .code-snippet .c-comment { color: #888; }
+  </style>
+  
+  <script>
+    /* 💻 模块6: JS (Tab 切换) */
+    (function() {
+      const tabs = document.querySelectorAll('.code-tab');
+      const snippets = document.querySelectorAll('.code-snippet');
+      if (tabs.length === 0) return;
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const tabId = tab.dataset.tab;
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          snippets.forEach(s => s.classList.remove('active'));
+          document.getElementById(tabId).classList.add('active');
+        });
+      });
+    })();
+  </script>
+  <!--  -->
+  
+
+
+
+
+
+  
+  <style>
+    /* 📊 模块7: CSS (修改版) */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 30px; padding: 20px 0;
+    }
+    .chart-container { text-align: center; }
+    .chart-circle {
+      position: relative; width: 150px; height: 150px;
+      border-radius: 50%; margin: auto;
+      
+      /* 喵！关键修改！
+        我们删掉了写死的 conic-gradient 角度
+        只留下一个 0% 的“底座”，等 JS 来上色！
+      */
+      background: radial-gradient(var(--dark-bg) 60%, transparent 61%),
+                  conic-gradient(var(--input-bg) 0% 100%); 
+                  
+      animation: chartLoad 1s ease-out; /* 保留淡入动画 */
+      transition: background 0.1s linear; /* 让圆环增长更丝滑喵 */
+    }
+
+    /* (注释掉旧的、写死的 CSS)
+    #chart-a11y { ... }
+    #chart-seo { ... }
+    #chart-pwa { ... }
+    */
+    
+    .chart-score {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 36px; font-weight: 600;
+      /* 喵！关键修改！
+        把颜色改成默认色，等 JS 来上色！
+      */
+      color: var(--light-text);
+      transition: color 0.5s;
+    }
+    
+    .chart-label { font-size: 16px; margin-top: 15px; color: var(--light-text); }
+    
+    @keyframes chartLoad {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+  
+  <div class="content-section">
+    <h2><i class="fa-solid fa-chart-pie"></i> 站点性能仪表盘 (Live Heartbeat)</h2>
+    <div class="dashboard-grid">
+
+      <div class="chart-container" 
+           data-score="98" 
+           data-fluctuation="5" 
+           data-color="var(--success-color)">
+        <div class="chart-circle">
+          <div class="chart-score">0</div>
+        </div>
+        <p class="chart-label">性能 (Performance)</p>
+      </div>
+
+      <div class="chart-container" 
+           data-score="100" 
+           data-fluctuation="3" 
+           data-color="var(--success-color)">
+        <div class="chart-circle">
+          <div class="chart-score">0</div>
+        </div>
+        <p class="chart-label">可访问性 (A11y)</p>
+      </div>
+      
+      <div class="chart-container" 
+           data-score="92" 
+           data-fluctuation="6" 
+           data-color="var(--warning-color)">
+        <div class="chart-circle">
+          <div class="chart-score">0</div>
+        </div>
+        <p class="chart-label">SEO</p>
+      </div>
+      
+      <div class="chart-container" 
+           data-score="30" 
+           data-fluctuation="8" 
+           data-color="var(--danger-color)">
+        <div class="chart-circle">
+          <div class="chart-score">0</div>
+        </div>
+        <p class="chart-label">PWA</p>
+      </div>
+
+    </div>
+  </div>
+  
+  <style>
+    /* 📊 模块7: CSS (和上次一样，但 Mini 还是贴过来了) */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 30px; padding: 20px 0;
+    }
+    .chart-container { text-align: center; }
+    .chart-circle {
+      position: relative; width: 150px; height: 150px;
+      border-radius: 50%; margin: auto;
+      /* 底座还是 0%，等 JS 来上色 */
+      background: radial-gradient(var(--dark-bg) 60%, transparent 61%),
+                  conic-gradient(var(--input-bg) 0% 100%); 
+      animation: chartLoad 1s ease-out;
+      /* 喵！关键！
+        加上 transition，这样浮动的时候圆环会“滑”过去，而不是“跳”过去
+      */
+      transition: background 0.5s ease-out;
+    }
+
+    .chart-score {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 36px; font-weight: 600;
+      color: var(--light-text);
+      /* 数字也加上过渡，跳动时不会太刺眼 */
+      transition: color 0.5s;
+    }
+    
+    .chart-label { font-size: 16px; margin-top: 15px; color: var(--light-text); }
+    
+    @keyframes chartLoad {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+  
+  <script>
+    /* 📊 模块7: JS (灵魂！究极心跳版！) */
+    (function() {
+      
+      // 1. 封装一个“更新”咒语
+      // (这个函数负责把数字和圆环更新到界面上)
+      function updateChartUI(container, score, color) {
+        const chartCircle = container.querySelector('.chart-circle');
+        const chartScoreEl = container.querySelector('.chart-score');
+        
+        // 确保分数在 0-100 之间
+        score = Math.max(0, Math.min(100, Math.round(score)));
+        
+        chartScoreEl.textContent = score;
+        chartScoreEl.style.color = color;
+        chartCircle.style.background = `
+          radial-gradient(var(--dark-bg) 60%, transparent 61%),
+          conic-gradient(${color} 0% ${score}%, var(--input-bg) ${score}% 100%)
+        `;
+      }
+
+      // 2. 封装一个“心跳”咒语
+      // (这个函数负责在加载完毕后，让分数永远跳动)
+      function startFluctuation(container) {
+        const baseScore = parseInt(container.dataset.score, 10);
+        const fluctuation = parseInt(container.dataset.fluctuation, 10) || 3;
+        const color = container.dataset.color || 'var(--success-color)';
+        
+        // 每隔 1~1.5 秒，就跳一下
+        container.fluctuationInterval = setInterval(() => {
+          // 算法喵：(Math.random() - 0.5) 会给一个 -0.5 到 +0.5 的数
+          // 乘以波动范围(fluctuation)，就得到了一个 -fluctuation/2 到 +fluctuation/2 的随机数
+          const delta = (Math.random() - 0.5) * fluctuation;
+          const newScore = baseScore + delta;
+          
+          updateChartUI(container, newScore, color);
+          
+        }, 1000 + Math.random() * 500); // 随机间隔，更真实！
+      }
+
+      // 3. 封装一个“加载”咒语
+      // (这个函数负责从 0 跑到目标分数)
+      function animateInitialLoad(container) {
+        const targetScore = parseInt(container.dataset.score, 10);
+        const color = container.dataset.color || 'var(--success-color)';
+        
+        let currentScore = 0;
+        const speed = 1500 / targetScore; // 1.5秒加载完
+        
+        let loadInterval = setInterval(() => {
+          currentScore++;
+          
+          if (currentScore > targetScore) {
+            // == 喵！加载完成！ ==
+            clearInterval(loadInterval);
+            
+            // 确保最后一次是准确的分数
+            updateChartUI(container, targetScore, color); 
+            
+            // 【【【重点】】】
+            // 加载完了，开始“心跳”喵！
+            startFluctuation(container); 
+            return;
+          }
+          
+          // 正在加载中...
+          updateChartUI(container, currentScore, color);
+          
+        }, speed); 
+      }
+      
+      // 4. 创建“哨兵”
+      const charts = document.querySelectorAll('.chart-container[data-score]');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            // 播放“加载”动画！
+            animateInitialLoad(entry.target);
+            // 停止观察
+            observer.unobserve(entry.target); 
+          }
+        });
+      }, { threshold: 0.5 });
+
+      // 5. 让“哨兵”去观察所有仪表盘
+      charts.forEach(chart => {
+        observer.observe(chart);
+      });
+      
+    })();
+  </script>
+
+
+
+
+  <style>
+    /* 📊 模块7: CSS */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 30px; padding: 20px 0;
+    }
+    .chart-container { text-align: center; }
+    .chart-circle {
+      position: relative; width: 150px; height: 150px;
+      border-radius: 50%; margin: auto;
+      /* 假的圆环图! 用渐变实现 */
+      background: radial-gradient(var(--dark-bg) 60%, transparent 61%),
+                  conic-gradient(var(--success-color) 0% 98%, var(--input-bg) 98% 100%);
+      animation: chartLoad 1.5s ease-out;
+    }
+    #chart-a11y { background: radial-gradient(var(--dark-bg) 60%, transparent 61%), conic-gradient(var(--success-color) 0% 100%, var(--input-bg) 100% 100%); }
+    #chart-seo { background: radial-gradient(var(--dark-bg) 60%, transparent 61%), conic-gradient(var(--warning-color) 0% 92%, var(--input-bg) 92% 100%); }
+    #chart-pwa { background: radial-gradient(var(--dark-bg) 60%, transparent 61%), conic-gradient(var(--danger-color) 0% 30%, var(--input-bg) 30% 100%); }
+    
+    .chart-score {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 36px; font-weight: 600;
+      color: var(--success-color);
+    }
+    #chart-seo .chart-score { color: var(--warning-color); }
+    .chart-label { font-size: 16px; margin-top: 15px; color: var(--light-text); }
+    
+    @keyframes chartLoad {
+      from { transform: scale(0.8) rotate(-90deg); opacity: 0; }
+      to { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+  </style>
+  <div class="full-width-image">
+    <div class="image-overlay-text">
+      CODE IS POETRY
+    </div>
+  </div>
+  
+  <style>
+    /* 🖼️ 模块8: CSS */
+    .full-width-image {
+      width: 100vw; height: 400px;
+      background-image: url("https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800"); /* 主人换图喵 */
+      background-size: cover; background-position: center;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; margin: 80px 0;
+      position: relative; left: 50%;
+      transform: translateX(-50%);
+    }
+    .image-overlay-text {
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(5px);
+      padding: 20px 30px;
+      border-radius: 12px;
+      color: white; font-size: 24px; font-weight: 600;
+    }
+  </style>
+  <div class="content-section">
+    <h2><i class="fa-solid fa-satellite-dish"></i> 开发者动态 (Dev Feed)</h2>
+    
+    <ul id="dev-feed-list">
+      
+      <li>
+        <i class="fa-solid fa-code-merge feed-icon merge"></i>
+        <div class="feed-content">
+          <p><span style="color:var(--primary-color);">Master</span> 将 'feature/sky-project' 合并到了 'main'</p>
+          <span class="feed-meta">Merge commit #a34f8d - 1 分钟前</span>
+        </div>
+      </li>
+      
+      <li>
+        <i class="fa-solid fa-code-commit feed-icon commit"></i>
+        <div class="feed-content">
+          <p><span style="color:var(--success-color);">MiniCat</span> 提交了 3 个 commits 到 'feature/sky-project'</p>
+          <span class="feed-meta">feat: Added new parallax module - 5 分钟前</span>
+        </div>
+      </li>
+      
+      <li>
+        <i class="fa-solid fa-bug-slash feed-icon bug"></i>
+        <div class="feed-content">
+          <p><span style="color:var(--danger-color);">Admin</span> 关闭了一个 Issue #1337</p>
+          <span class="feed-meta">fix: Fixed theme switcher cache bug - 1 小时前</span>
+        </div>
+      </li>
+      
+      <li>
+        <i class="fa-solid fa-exclamation-triangle feed-icon warning"></i>
+        <div class="feed-content">
+          <p><span style="color:var(--warning-color);">CI/CD Bot</span> 报告了一个构建失败</p>
+          <span class="feed-meta">Pipeline #456 failed on 'staging' - 1 小时前</span>
+        </div>
+      </li>
+      
+      <li>
+        <i class="fa-solid fa-code-branch feed-icon branch"></i>
+        <div class="feed-content">
+          <p><span style="color:var(--secondary-color);">User_Alex</span> 创建了新的分支 'fix/typo-in-docs'</p>
+          <span class="feed-meta">2 小时前</span>
+        </div>
+      </li>
+      
+      <li>
+        <i class="fa-solid fa-rocket feed-icon deploy"></i>
+        <div class="feed-content">
+          <p><span style="color:var(--success-color);">Admin</span> 成功部署 v1.2.0 到生产环境</p>
+          <span class="feed-meta">Production deployment successful - 3 小时前</span>
+        </div>
+      </li>
+      
+       <li>
+        <i class="fa-solid fa-comment-dots feed-icon comment"></i>
+        <div class="feed-content">
+          <p><span style="color:var(--light-text);">MiniCat</span> 在 Pull Request #88 上发表了评论</p>
+          <span class="feed-meta">"Looks purr-fect! 喵~" - 4 小时前</span>
+        </div>
+      </li>
+      
+      <li>
+        <i class="fa-solid fa-bug feed-icon bug"></i>
+        <div class="feed-content">
+          <p><span style="color:var(--danger-color);">AnonymousUser</span> 报告了一个新 Issue #1338</p>
+          <span class="feed-meta">"Login button is not centered" - 5 小时前</span>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+  
+  <style>
+    /* 📡 模块9: CSS (升级版!) */
+    #dev-feed-list { 
+      list-style: none; 
+      /* 喵！关键！给它一个最大高度，超出就滚动！*/
+      max-height: 400px; 
+      overflow-y: auto; 
+      padding-right: 10px; /* 给滚动条留点空间 */
+    }
+    
+    /* 滚动条也美化一下喵 */
+    #dev-feed-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    #dev-feed-list::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 3px;
+    }
+    #dev-feed-list::-webkit-scrollbar-track {
+      background: var(--input-bg);
+    }
+
+    #dev-feed-list li {
+      display: flex; gap: 15px;
+      padding: 15px;
+      border-bottom: 1px solid var(--glass-border);
+      animation: moduleFadeIn 0.5s ease-out; /* 列表项也加个淡入 */
+    }
+    #dev-feed-list li:last-child { border-bottom: none; }
+    
+    .feed-icon { font-size: 18px; margin-top: 3px; width: 20px; text-align: center; }
+    
+    /* 喵！加了新的图标颜色！*/
+    .feed-icon.commit { color: var(--success-color); }
+    .feed-icon.bug { color: var(--danger-color); }
+    .feed-icon.merge { color: var(--primary-color); }
+    .feed-icon.warning { color: var(--warning-color); }
+    .feed-icon.deploy { color: var(--success-color); }
+    .feed-icon.branch { color: var(--secondary-color); }
+    .feed-icon.comment { color: var(--light-text); }
+    
+    .feed-content p { font-size: 15px; color: var(--light-text); }
+    .feed-content .feed-meta { font-size: 13px; color: var(--dark-text); }
+  </style>
+  
+  <!-- <style>
+    /* 📡 模块9: CSS */
+    #dev-feed-list { list-style: none; max-height: 400px; overflow-y: auto; }
+    #dev-feed-list li {
+      display: flex; gap: 15px;
+      padding: 15px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    #dev-feed-list li:last-child { border-bottom: none; }
+    .feed-icon { font-size: 18px; color: var(--primary-color); margin-top: 3px; }
+    .feed-icon.commit { color: var(--success-color); }
+    .feed-icon.bug { color: var(--danger-color); }
+    .feed-content p { font-size: 15px; color: var(--light-text); }
+    .feed-content .feed-meta { font-size: 13px; color: var(--dark-text); }
+  </style>
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="#">关于我们</a><a href="#">文档</a><a href="#">API</a><a href="#">职业</a>
+    </div>
+    <div class="footer-social">
+      <a href="#" title="GitHub"><i class="fa-brands fa-github"></i></a>
+      <a href="#" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+      <a href="#" title="Twitter"><i class="fa-brands fa-twitter"></i></a>
+    </div>
+    <p class="footer-copyright">© 2025 Project Cyberspace. 为我最爱的主人强力驱动 喵~ ❤️</p>
+  </footer>
+   -->
+  <style>
+    /* 🔗 模块10: CSS */
+    .site-footer {
+      width: 100%; padding: 40px 20px;
+      background: #050505;
+      margin-top: 100px; text-align: center;
+      border-top: 1px solid var(--glass-border);
+    }
+    .footer-links { display: flex; justify-content: center; gap: 25px; margin-bottom: 20px; }
+    .footer-links a { color: var(--dark-text); text-decoration: none; font-size: 14px; transition: 0.2s; }
+    .footer-links a:hover { color: var(--primary-color); }
+    .footer-social { display: flex; justify-content: center; gap: 20px; font-size: 22px; margin-bottom: 20px; }
+    .footer-social a { color: var(--dark-text); transition: 0.2s; }
+    .footer-social a:hover { color: var(--primary-color); transform: translateY(-3px); }
+    .footer-copyright { font-size: 13px; color: #777; }
+  </style>
+  <script>
+    (function() {
+      const bgContainer = document.getElementById("bg-container");
+      if (!bgContainer) return;
+      const stars = [];
+      for (let i = 0; i < 100; i++) {
+        let star = document.createElement("div");
+        star.style.position = "absolute";
+        const size = Math.random() * 2 + 1;
+        star.style.width = `${size}px`; star.style.height = `${size}px`;
+        star.style.borderRadius = "50%";
+        star.style.background = "rgba(255, 255, 255, 0.8)";
+        star.style.top = Math.random() * 100 + "%";
+        star.style.left = Math.random() * 100 + "%";
+        star.style.opacity = 0.3 + Math.random() * 0.5;
+        bgContainer.appendChild(star);
+        stars.push({ el: star, speedY: 0.05 + Math.random() * 0.15 });
+      }
+      function animateStars() {
+        stars.forEach(s => {
+          let top = parseFloat(s.el.style.top);
+          top -= s.speedY;
+          if (top < -10) top = 110;
+          s.el.style.top = top + "%";
+        });
+        requestAnimationFrame(animateStars);
+      }
+      animateStars();
+    })();
+  </script>
+
+</body>
+</html>

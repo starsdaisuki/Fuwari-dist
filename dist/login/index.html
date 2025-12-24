@@ -1,0 +1,21 @@
+<!DOCTYPE html><link rel="stylesheet" href="/_astro/_page_.B3k4JFJg.css">
+<style>.login-container[data-astro-cid-sgpqyurt]{max-width:300px;margin:100px auto;display:flex;flex-direction:column;gap:10px;font-family:sans-serif;text-align:center}.login-input[data-astro-cid-sgpqyurt]{padding:10px;border:1px solid #ccc;border-radius:6px}.login-btn[data-astro-cid-sgpqyurt]{padding:10px;border:none;border-radius:6px;background:#7aa2f7;color:#fff}.login-msg[data-astro-cid-sgpqyurt]{color:red}
+</style><script type="module" src="/_astro/page.Z8IJTFqj.js"></script><section class="login-container" data-astro-cid-sgpqyurt> <h2 data-astro-cid-sgpqyurt>Sign in ~</h2> <input id="user" placeholder="Username" class="login-input" data-astro-cid-sgpqyurt> <input id="pass" type="password" placeholder="Password" class="login-input" data-astro-cid-sgpqyurt> <button id="btn" class="login-btn" data-astro-cid-sgpqyurt>sign in</button> <p id="msg" class="login-msg" data-astro-cid-sgpqyurt></p> </section>  <script>
+    console.log("login page loaded");
+  document.getElementById("btn").onclick = async () => {
+    const res = await fetch("http://localhost:3001/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: document.getElementById("user").value,
+        password: document.getElementById("pass").value
+      })
+    });
+
+    if (res.ok) {
+      window.location.href = "/";
+    } else {
+      document.getElementById("msg").innerText = "Wrong！";
+    }
+  };
+</script>

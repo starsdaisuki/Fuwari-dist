@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Register</title>
+
+<style>
+  /* ===========================
+     🟣 背景：赛博霓虹网格 + 扫描线
+     =========================== */
+  body {
+    margin: 0;
+    height: 100vh;
+    background: #0a0f1f;
+    overflow: hidden;
+    font-family: "Inter", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
+
+  /* 扫描线效果 */
+  .scanlines::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.03),
+      rgba(255,255,255,0.03) 2px,
+      transparent 2px,
+      transparent 4px
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* 霓虹网格背景 */
+  #grid {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: 
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: moveGrid 10s linear infinite;
+    z-index: -1;
+  }
+
+  @keyframes moveGrid {
+    from { background-position: 0 0; }
+    to { background-position: 0 40px; }
+  }
+
+  /* ===========================
+     注册卡片：霓虹边框 + 呼吸光
+     =========================== */
+  .card {
+    width: 380px;
+    padding: 40px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    border-radius: 14px;
+    border: 1px solid rgba(140,70,255,0.4);
+    box-shadow: 0 0 25px rgba(140,70,255,0.25);
+    position: relative;
+  }
+
+  /* 顶部呼吸光 */
+  .card::before {
+    content: "";
+    position: absolute;
+    top: -2px; left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #8a2be2, transparent);
+    animation: glow 2.4s ease-in-out infinite;
+  }
+
+  @keyframes glow {
+    0%,100% { opacity: 0.2; }
+    50% { opacity: 1; }
+  }
+
+  h1 {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 30px;
+  }
+
+  /* ===========================
+     输入框（霓虹边框 + 聚焦光）
+     =========================== */
+  input {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #fff;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(160,80,255,0.4);
+    transition: 0.25s;
+    outline: none;
+  }
+
+  input:focus {
+    border: 1px solid #bb86fc;
+    box-shadow: 0 0 10px #bb86fc;
+    background: rgba(255,255,255,0.12);
+  }
+
+  /* ===========================
+     按钮：赛博紫渐变 + 悬浮发光
+     =========================== */
+  button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    font-size: 15px;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #7b4bff, #9f6bff);
+    box-shadow: 0 0 15px rgba(140,70,255,0.4);
+    transition: 0.25s;
+  }
+
+  button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 22px rgba(140,70,255,0.7);
+  }
+
+  .link-btn {
+    background: rgba(255,255,255,0.15);
+    margin-top: 12px;
+  }
+</style>
+</head>
+
+<body class="scanlines">
+<div id="grid"></div>
+
+<div class="card">
+  <h1>Create Account</h1>
+
+  <input id="username" placeholder="username" />
+  <input id="password" type="password" placeholder="password" />
+
+  <button id="register-btn">Register</button>
+  <button class="link-btn" onclick="location.href='login.html'">Back to Login</button>
+</div>
+
+
+
+
+
+
+
+
+<section class="features">
+  <h2 class="title">系统功能介绍</h2>
+
+  <div class="card-list">
+
+    <div class="card">
+      <div class="icon">🗂️</div>
+      <h3>用户管理系统</h3>
+      <p>支持账号注册、登录、校验，数据存储到数据库。</p>
+    </div>
+
+    <div class="card">
+      <div class="icon">⚡</div>
+      <h3>高速后端 API</h3>
+      <p>基于 Node.js + PostgreSQL，高效稳定的动态数据交互。</p>
+    </div>
+
+    <div class="card">
+      <div class="icon">📱</div>
+      <h3>响应式界面</h3>
+      <p>页面自动适配电脑、手机、平板，界面更舒适。</p>
+    </div>
+
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+.features {
+  margin-top: 80px;
+  text-align: center;
+}
+.features .title {
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+.card-list {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+.card {
+  width: 280px;
+  padding: 25px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  color: #ddd;
+  transition: 0.3s;
+}
+.card:hover {
+  transform: translateY(-6px);
+  background: rgba(255,255,255,0.15);
+}
+.card h3 {
+  margin-top: 10px;
+  color: white;
+}
+.card p {
+  font-size: 14px;
+  opacity: 0.8;
+}
+.icon {
+  font-size: 40px;
+}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  /* ===== 修改为你的 API ===== */
+  const API = "http://localhost:3001";
+  // const API = "https://astro-backend-u0jg.onrender.com";
+
+  document.getElementById("register-btn").addEventListener("click", async () => {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    const res = await fetch(API + "/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("注册成功喵～欢迎加入！");
+      window.location.href = "/login.html";
+    } else {
+      alert("注册失败喵，请换一个用户名试试～");
+    }
+  });
+</script>
+
+</body>
+</html>
